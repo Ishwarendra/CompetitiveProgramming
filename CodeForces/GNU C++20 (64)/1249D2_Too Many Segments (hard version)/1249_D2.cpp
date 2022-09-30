@@ -8,44 +8,50 @@
 
 using i64 = long long;
 
+constexpr int N = 2e5 + 10;
+
 int main()
 {
     std::ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
     
-    auto cmp = [&](auto &x, auto &y)
-    {
-        if (x.second != y.second)
-            return x.second > y.second;
-        return x.first < y.first;
-    };
-
     int n, k;
     std::cin >> n >> k;
 
-    constexpr int N = 2e5 + 10;
+    std::vector<int> l(n), r(n);
+    std::set<std::pair<int, int>, std::greater<>> seg;
+    std::map<int, std::vector<int>> start, end;
 
-    std::map<std::pair<int, int>, std::vector<int>> pos;
-    std::vector<std::pair<int, int>> a;
-    std::vector<int> t(N);
+    std::vector<int> ans;
 
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < n; ++i)
     {
-        int l, r;
-        std::cin >> l >> r;
-        a.emplace_back(l, r);
-        t[l]++, t[r + 1]--;
-
-        pos[{l, r}].emplace_back(i + 1);
+        std::cin >> l[i] >> r[i];
+        start[l[i]].emplace_back(i);
+        end[r[i] + 1].emplace_back(i);
     }
 
-    for (int i = 1; i < N; i++)
-        t[i] += t[i - 1];
-
-    for (int i = 0; i < N; i++)
+    for (int i = 1; i < N; ++i)    
     {
+        for (auto x : end[i]) // useless now since they end at i - 1 time
+            seg.erase({r[x], x});
 
+        for (auto x : start[i]) // new useful segments
+            seg.emplace(r[x], x);
+
+        int cnt = 0;
+        while (seg.size() > k)
+        {
+            cnt++;
+            auto [num, id] = *std::begin(seg);
+            ans.emplace_back(id + 1);
+            seg.erase(std::begin(seg));
+        }
     }
+
+    std::cout << std::size(ans) << "\n";
+    for (auto i : ans)
+        std::cout << i << " ";
     
     return 0;
 }
