@@ -1,5 +1,5 @@
 # CompetitiveProgramming
-- Contains all those codes from [Codeforces](https://codeforces.com/submissions/ishwarendra) and [Atcoder](https://atcoder.jp/) which [UpCode](https://github.com/crapthecoder/UpCode) could scrape.
+- Contains ~~all~~ many those codes from [Codeforces](https://codeforces.com/submissions/ishwarendra) and [Atcoder](https://atcoder.jp/) which [UpCode](https://github.com/crapthecoder/UpCode) could scrape.
 
 ## CodeForces Stats
 
