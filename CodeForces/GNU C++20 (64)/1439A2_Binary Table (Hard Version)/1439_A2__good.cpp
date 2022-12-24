@@ -10,7 +10,17 @@ using i64 = long long;
 
 void solve()
 {
-    int a;  
+    int n, m;
+    std::cin >> n >> m;
+
+    for (int i = 0; i < n; i++)  
+    {
+        for (int j = 0; j < m; j++)
+        {
+            char ch;
+            std::cin >> ch;
+        }
+    }
 }
 
 int main()
