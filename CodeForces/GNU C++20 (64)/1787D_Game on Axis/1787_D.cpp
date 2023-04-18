@@ -34,6 +34,7 @@ void solve()
         can[u] = 1; 
         for (int v : adj[u])
             dfs(v, u);
+        
     }; dfs(n, n);
 
     int total = std::accumulate(std::begin(can), std::end(can), 0);
