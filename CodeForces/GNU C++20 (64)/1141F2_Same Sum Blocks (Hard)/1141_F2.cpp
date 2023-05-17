@@ -47,64 +47,49 @@ int main()
     for (int i = 0; i < n; i++)
         p[i + 1] = p[i] + a[i];
 
-    std::set<i64> s;
-    for (int i = 0; i <= n; i++)
+    std::map<i64, std::vector<std::pair<int, int>>> m;
+    for (int i = 0; i < n; i++)
     {
-        for (int j = i + 1; j <= n; j++)
-            s.emplace(p[j] - p[i]);
+        for (int j = i + 1; j <= n; j++)    
+            m[p[j] - p[i]].emplace_back(i + 1, j);
     }
 
-    std::vector<int> path;
+    for (auto &[num, segs] : m)
+    {
+        std::sort(std::begin(segs), std::end(segs), [&](auto &x, auto &y)
+        {
+            return x.second < y.second; 
+        });
+    }
+
     int ans = 0;
-    for (auto sum : s)
+    std::vector<std::pair<int, int>> path;
+    for (auto &[nums, seg] : m)
     {
-        std::vector<int> dp(n + 1), skip(n + 1), par(n + 1, 0);
-        std::map<i64, int> lastPos;
-        lastPos[0] = 0;
+        int cur_ans = 0;
+        std::vector<std::pair<int, int>> cur_path;
 
-        for (int i = 1; i <= n; i++)
+        int end = -1;
+        for (auto [l, r] : seg)
         {
-            if (lastPos.contains(p[i] - sum))
-            {
-                if (dp[lastPos[p[i] - sum]] + 1 > dp[i])
-                    dp[i] = dp[lastPos[p[i] - sum]] + 1, par[i] = lastPos[p[i] - sum];
-            }
+            if (l <= end)
+                continue;
 
-            if (dp[i] < dp[i - 1])
-            {
-                dp[i] = dp[i - 1];
-                par[i] = i - 1;
-                skip[i] = 1;
-            }
-
-            lastPos[p[i]] = i;
+            cur_ans++;
+            end = r;
+            cur_path.emplace_back(l, r);
         }
 
-        int cur_ans = *std::max_element(std::begin(dp), std::end(dp));
-        if (cur_ans <= ans)
-            continue;
-
-        path.clear();
-        ans = cur_ans;
-
-        for (int i = n; i >= 0 and cur_ans; )
+        if (cur_ans > ans)
         {
-            if (dp[i] == cur_ans and !skip[i])
-            {
-                cur_ans--;
-                path.emplace_back(i);
-                path.emplace_back(par[i] + 1);
-                i = par[i];
-            }
-            else
-                i--;
+            ans = cur_ans;
+            path = cur_path;
         }
     }
 
-    std::reverse(std::begin(path), std::end(path));
     std::cout << ans << "\n";
-    for (int i = 0; i < std::size(path); i += 2)
-        std::cout << path[i] << " " << path[i + 1] << "\n";
+    for (auto [l, r] : path)
+        std::cout << l << " " << r << "\n";
 
     return 0;
 }
