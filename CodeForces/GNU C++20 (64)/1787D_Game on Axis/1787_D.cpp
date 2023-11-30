@@ -1,68 +1,97 @@
 #include "bits/stdc++.h"
 
 #ifdef LOCAL
-#include "F:\CPP\Debug\debug.h" 
+#include "F:\CPP\Debug\debug.h"
 #else
 #define print(...) 1;
 #endif
 
 using i64 = long long;
 
+class DSU
+{
+    std::vector<int> rnk, par;
+public:
+    DSU() {}
+    DSU(int n) : rnk(n, 1), par(n) { std::iota(par.begin(), par.end(), 0); }
+    int get(int x)
+    {
+        while (x != par[x]) x = par[x] = par[par[x]];
+        return x;
+    }
+    bool unite(int x, int y)
+    {
+        int p1 = get(x), p2 = get(y);
+        if (p1 == p2)
+            return false;
+        else
+        {
+            if (rnk[p2] > rnk[p1])
+                std::swap(p1, p2);
+
+            par[p2] = p1, rnk[p1] += rnk[p2], rnk[p2] = 0;
+            return true;
+        }
+    }
+    bool same(int x, int y)
+    {
+        return get(x) == get(y);
+    }
+    int size(int x)
+    {
+        return rnk[get(x)];
+    }
+};
+
 void solve()
 {
     int n;
     std::cin >> n;
 
-    std::vector<int> adj[n + 1];
-    for (int i = 0; i < n; i++)  
-    {
-        int a;
-        std::cin >> a;
+    std::vector<int> a(n + 1, 0);
+    for (int i = 1; i <= n; i++)
+        std::cin >> a[i];
 
-        if (0 <= i + a and i + a < n and a != 0)
-            adj[i + a].emplace_back(i);
-        else
-            adj[n].emplace_back(i);
+    int start = 1;
+    DSU dsu(n + 2);
+
+    for (int i = 1; i <= n; i++)
+    {
+        int x = i, y = i + a[i];
+        y = std::max(0, y);
+        y = std::min(n + 1, y);
+        dsu.unite(x, y);
     }
 
-    std::vector<int> can(n + 1), par(n);
-
-    std::function<void(int, int)> dfs;
-    dfs = [&](int u, int p)
+    int cnt = 1;
+    i64 ans = 0;
+    std::vector<int> vis(n + 1, 0);
+    while (1 <= start and start <= n and !vis[start])
     {
-        par[u] = p;
-        can[u] = 1; 
-        for (int v : adj[u])
-            dfs(v, u);
-        
-    }; dfs(n, n);
+        ans += dsu.size(0) + dsu.size(n + 1) - cnt;
+        ans -= dsu.same(start, 0) + dsu.same(start, n + 1);
+        print(ans)
 
-    int total = std::accumulate(std::begin(can), std::end(can), 0);
-
-    if (can[0])
-    {
-        // std::vector<int> down(n, -1);
-        // int par = 0, u = 0;
-        // while (u != n)
-        // {
-        //     for (auto v : adj[u])
-        //     {
-        //         if (v == par)
-        //             continue;
-
-        //         print(par, u, v)
-        //         par = u;
-        //         u = v;
-        //         down[u] = down[par] + 1;
-        //     }
-        // }
-
-        // print(down)
+        vis[start] = 1;
+        start += a[start];
+        cnt++;
     }
+
+    if (1 + a[1] <= 0 or 1 + a[1] > n)
+        ans += (n + 1LL) * n;
     else
     {
-
+        start = 1;
+        std::fill(std::begin(vis), std::end(vis), 0);
+        while (1 <= start and start <= n and !vis[start])
+        {
+            ans += n + 1;
+            vis[start] = 1;
+            start += a[start];
+        }
     }
+
+    std::cout << ans << "\n";
 }
 
 int main()
@@ -70,11 +99,11 @@ int main()
     std::ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
 
-    int t = 1;
+    int t;
     std::cin >> t;
-    
+
     while (t--)
         solve();
-    
+
     return 0;
 }
