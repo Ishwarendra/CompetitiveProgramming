@@ -1,36 +1,29 @@
-#include "bits/stdc++.h"
+#include <bits/stdc++.h>
+using namespace std;
+#define rep(i,a,n) for (int i=a;i<n;i++)
 
-#ifdef LOCAL
-#include "F:\CPP\Debug\debug.h" 
-#else
-#define print(...) 1;
-#endif
+const int N=101000;
+map<int,int> hs;
 
-using i64 = long long;
-
-int main()
-{
-    std::ios::sync_with_stdio(false);
-    std::cin.tie(nullptr);
-    
-    int n;
-    std::cin >> n;
-
-    std::vector a(n, 0);
-    for (int i = 0; i < n; i++)
-        std::cin >> a[i];
-
-    int ans = 0;
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = i + 1; j < n; j++)
-        {
-            if (a[i] > a[j])
-                ans++;
-        }
+int n,a,b,f[N],vs[N],sta[N],p[N];
+int find(int x) { return f[x]==x?x:f[x]=find(f[x]);}
+int main() {
+    scanf("%d%d%d",&n,&a,&b);
+    rep(i,1,n+1) scanf("%d",p+i),hs[p[i]]=i,f[i]=i;
+    rep(i,1,n+1) {
+        if (hs.count(a-p[i])) f[find(hs[a-p[i]])]=find(i),vs[i]|=1;
+        if (hs.count(b-p[i])) f[find(hs[b-p[i]])]=find(i),vs[i]|=2;
     }
-
-    std::cout << ans;
-    
-    return 0;
+    rep(i,1,n+1) sta[i]=3;
+    rep(i,1,n+1) sta[find(i)]&=vs[i];
+    rep(i,1,n+1) if (sta[i]==0) {
+        puts("NO"); return 0;
+    }
+    puts("YES");
+    rep(i,1,n+1) {
+        int st=sta[find(i)];
+        putchar('0'+((st&1)==0));
+        if (i!=n) putchar(' ');
+    }
+    puts("");
 }

@@ -1,84 +1,97 @@
-// C++ program to count inversions using Binary Indexed Tree
-#include<bits/stdc++.h>
-using namespace std;
+#include "bits/stdc++.h"
 
-// Returns sum of arr[0..index]. This function assumes
-// that the array is preprocessed and partial sums of
-// array elements are stored in BITree[].
-int getSum(int BITree[], int index)
+#ifdef LOCAL
+#include "/Users/ishwar/Debug/debug.h" 
+#else
+#define print(...) 1;
+#endif
+
+using i64 = long long;
+
+class DSU
 {
-    int sum = 0; // Initialize result
-
-    // Traverse ancestors of BITree[index]
-    while (index > 0)
+    std::vector<int> rnk, par;
+public:
+    DSU() {}
+    DSU(int n) : rnk(n, 1), par(n) { std::iota(par.begin(), par.end(), 0); }
+    int get(int x)
     {
-        // Add current element of BITree to sum
-        sum += BITree[index];
-
-        // Move index to parent node in getSum View
-        index -= index & (-index);
+        while (x != par[x]) x = par[x] = par[par[x]];
+        return x;
     }
-    return sum;
-}
-
-// Updates a node in Binary Index Tree (BITree) at given index
-// in BITree. The given value 'val' is added to BITree[i] and
-// all of its ancestors in tree.
-void updateBIT(int BITree[], int n, int index, int val)
-{
-    // Traverse all ancestors and add 'val'
-    while (index <= n)
+    bool unite(int x, int y)
     {
-    // Add 'val' to current node of BI Tree
-    BITree[index] += val;
-
-    // Update index to that of parent in update View
-    index += index & (-index);
+        int p1 = get(x), p2 = get(y);
+        if (p1 == p2)
+            return false;
+        else
+        {
+            if (rnk[p2] > rnk[p1])
+                std::swap(p1, p2);
+                
+            par[p2] = p1, rnk[p1] += rnk[p2], rnk[p2] = 0;                
+            return true;
+        }
     }
-}
-
-// Returns inversion count arr[0..n-1]
-int getInvCount(int arr[], int n)
-{
-    int invcount = 0; // Initialize result
-
-    // Find maximum element in arr[]
-    int maxElement = 0;
-    for (int i=0; i<n; i++)
-        if (maxElement < arr[i])
-            maxElement = arr[i];
-
-    // Create a BIT with size equal to maxElement+1 (Extra
-    // one is used so that elements can be directly be
-    // used as index)
-    int BIT[maxElement+1];
-    for (int i=1; i<=maxElement; i++)
-        BIT[i] = 0;
-
-    // Traverse all elements from right.
-    for (int i=n-1; i>=0; i--)
+    bool same(int x, int y)
     {
-        // Get count of elements smaller than arr[i]
-        invcount += getSum(BIT, arr[i]-1);
-
-        // Add current element to BIT
-        updateBIT(BIT, maxElement, arr[i], 1);
+        return get(x) == get(y);
     }
+    int size(int x)
+    {
+        return rnk[get(x)];
+    }
+}; 
 
-    return invcount - std::uniform_int_di % 2;
-}
-
-// Driver program
 int main()
 {
-    int n;
-    std::cin >> n;
+    std::ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
+    
+    int n, a, b;
+    std::cin >> n >> a >> b;
 
-    int arr[n];
+    std::map<int, int> id;
+    std::vector<int> p(n), options(n), can(n);
     for (int i = 0; i < n; i++)
-        std::cin >> arr[i];
+    {
+        std::cin >> p[i];
+        id[p[i]] = i;
+    }
 
-    cout << getInvCount(arr, n);
+    DSU dsu(n);
 
+    for (int i = 0; auto x : p)
+    {
+        can[i] = 3;
+        if (id.contains(a - x))
+        {
+            options[i] |= 2;
+            dsu.unite(i, id[a - x]);
+        }
+
+        if (id.contains(b - x))
+        {
+            options[i] |= 1;
+            dsu.unite(i, id[b - x]);
+        }
+        i++;
+    }
+
+    std::vector<int> val(n);
+    for (int i = 0; i < n; i++)
+    {
+        can[dsu.get(id[p[i]])] &= options[i];    
+        if (can[dsu.get(id[p[i]])] == 0)
+        {
+            std::cout << "NO\n";
+            return 0;
+        }
+    }
+
+    std::cout << "YES\n";
+    for (int i = 0; i < n; i++)
+        std::cout << (can[dsu.get(i)] % 2) << " \n"[i == n - 1];
+    
     return 0;
 }

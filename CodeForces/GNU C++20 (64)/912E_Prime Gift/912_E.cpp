@@ -1,7 +1,7 @@
 #include "bits/stdc++.h"
 
 #ifdef LOCAL
-#include "F:\CPP\Debug\debug.h" 
+#include "/Users/ishwar/Debug/debug.h" 
 #else
 #define print(...) 1;
 #endif
