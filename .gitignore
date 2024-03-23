@@ -3,12 +3,19 @@
 # CP Extension generated file
 **/*cph
 
+# From Editor
+**/*.zed
+**/*.vscode
+
+
 # Executable File
 **/*.exe
 **/*.out
 
 # TestCaseFile
 **/*__tests
+**/in*.txt
+**/out*.txt
 
 # Temporary Files made for testing ignore if i forgor to delete 💀
 **/del*.cpp
