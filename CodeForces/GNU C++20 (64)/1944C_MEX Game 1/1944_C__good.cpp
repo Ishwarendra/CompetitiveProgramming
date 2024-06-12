@@ -1,73 +1,113 @@
+/* जय  महाकाल */
+
 #include "bits/stdc++.h"
+using namespace std ;  
+#define endl '\n'
+#define ll long long 
+const long long mx1 = 1e9 ; 
+const long long Mod = 1e9 + 7 ; 
 
-#ifdef LOCAL
-#include "/Users/ishwar/Debug/debug.h" 
-#else
-#define print(...) 1;
-#endif
-
-using i64 = long long;
-
-void solve()
+long long getpow(int a , int b) //Calculating a ^ b in 0(log(b)) - Binary Expo.
 {
-    int n;
-    std::cin >> n;
-
-    std::map<int, int> m;
-    for (int i = 0; i < n; i++)
+    int res = 1;
+    while(b > 0)
     {
-        int a;
-        std::cin >> a;
-        m[a]++;
-    }
-
-    auto good = [&](int mid)
-    {
-        std::vector<std::pair<int, int>> a;
-        for (auto &[num, f] : m)
+        if((b & 1)==1)
         {
-            if (num < mid)
-                a.emplace_back(f, num);
+            res *= a ;
+            res %= Mod;
         }
-
-        std::sort(std::begin(a), std::end(a));
-        if (std::size(a) != mid)
-            return false;
-
-        for (int i = 1; i < std::size(a); i++)
-        {
-            if (i == 1 and a[i].first < 2)
-                return false;
-        }
-
-        return true;
-    };
-
-    int left = 0, right = n;
-    int ans = 0;
-
-    while (left <= right)
-    {
-        int mid = std::midpoint(left, right);
-        if (good(mid))
-            ans = mid, left = mid + 1;
-        else
-            right = mid - 1;
+        b>>=1;
+        a*=a;
+        a%=Mod;
     }
-
-    std::cout << ans << "\n";
+    return res ;
 }
 
-int main()
+void show2(map<int,int>& mt)
 {
-    std::ios::sync_with_stdio(false);
-    std::cin.tie(nullptr);
+    for(auto& i : mt)
+    {
+        cout << "[ ";
+        cout << i.first << ',' << i.second << ' ';
+        cout << "]" << endl ;
+    }
+}
 
-    int t;
-    std::cin >> t;
+void show1(vector<int>& x)
+{
+    cout << "[ ";
+    for(auto& i : x)
+    {
+        cout << i << ' ';
+    }
+    cout << "]";
+    cout << endl ;
+}
+
+
+ /* -------------------------M A I N __ C O D E --------------------------------------*/
+
+/* ------- LEARNING ALSO OCCURS THROUGH SEEING OTHER'S SOLUTION -------- */
+
+/* ------- EVERY PROBLEM WHETHER EASY OR TOUGH TEACHES YOU SOMETHING -- SO ENJOY LEARNING -------- */
+
+/* -------- Do Problem Analysis as much as Possible else u will surely get WA on some TCs ------ */
+
+void test_case()
+{
+    // take a walk if stuck
+    int n ; cin >> n ;
+    vector<int> a(n) , mp(n) ;
     
-    while (t--)
-        solve();
+    for(int i = 0 ; i < n ; i++){
+        cin >> a[i];
+        mp[a[i]]++ ;
+        mp[a[i]] = min(2 , mp[a[i]]);
+    }
     
-    return 0;
+    int MEX = -1 ; int cnt =1 ;
+    
+    for(int i = 0 ; i < n ; i++){
+        /* if odd then alice turn else bob's turn */
+        if(mp[i] == 0){
+            MEX = i ;
+            break ;
+        }
+        
+        if(i + 1 < n && mp[i + 1] > 1){
+            cnt++ ;
+            continue ;
+        }else if(i + 1 < n && mp[i + 1] <= 1){
+            cnt++ ;
+            if(!(cnt % 2)){
+                MEX = i + 1;
+                //cout << "THIS => " << MEX << endl;
+                break ;
+            }
+        }
+    }
+    
+    cout << ((MEX == -1) ? n : MEX) << endl;
+}
+
+signed main()
+{
+    ios_base::sync_with_stdio(0);
+    
+    cin.tie(0); cout.tie(0);
+    
+    /* WRITE STUFF DOWN
+    * DON'T GET STUCK ON ONE APPROACH
+    * IF STUCK ON A QUESTION, MOVE TO THE NEXT ONE
+    */
+
+    int t ; cin >> t ; 
+    
+    while(t--)
+    {
+        test_case();
+    }
+    
+    return 0 ; 
 }

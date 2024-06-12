@@ -17,8 +17,13 @@
 **/in*.txt
 **/out*.txt
 
+# Random?
+.DS_*
+
 # Temporary Files made for testing ignore if i forgor to delete 💀
-**/del*.cpp
+del*.c*
+del*.o*
+
 
 # Secret Maybe, Maybe not φ(*￣0￣)
 **/Charmi.cpp
